@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Vehicle Exit</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">🚗</div>
+
+            <div>
+
+                <h2>Smart Parking</h2>
+
+                <span>Management System</span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-item">
+
+                📊 Dashboard
+
+            </a>
+
+            <a href="{{ url_for('parking_slots') }}"
+               class="nav-item">
+
+                🅿️ Parking Slots
+
+            </a>
+
+            <a href="{{ url_for('vehicles') }}"
+               class="nav-item">
+
+                🚘 Vehicles
+
+            </a>
+
+            <a href="{{ url_for('vehicle_entry') }}"
+               class="nav-item">
+
+                ➕ Vehicle Entry
+
+            </a>
+
+            <a href="{{ url_for('vehicle_exit') }}"
+               class="nav-item active">
+
+                🚪 Vehicle Exit
+
+            </a>
+
+            <a href="{{ url_for('parking_history') }}"
+               class="nav-item">
+
+                📋 Parking History
+
+            </a>
+
+            <a href="{{ url_for('revenue') }}"
+               class="nav-item">
+
+                💰 Revenue
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+
+                🚪 Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Vehicle Exit</h1>
+
+                <p>Process vehicle exit and parking payment</p>
+
+            </div>
+
+        </header>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Currently Parked Vehicles</h2>
+
+                    <p>
+                        Select a vehicle to process exit
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Vehicle</th>
+                            <th>Type</th>
+                            <th>Owner</th>
+                            <th>Slot</th>
+                            <th>Entry Time</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for record in active_records %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ record.vehicle_number }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+                                {{ record.vehicle_type }}
+                            </td>
+
+                            <td>
+                                {{ record.owner_name }}
+                            </td>
+
+                            <td>
+                                {{ record.slot_number }}
+                            </td>
+
+                            <td>
+                                {{ record.entry_time }}
+                            </td>
+
+                            <td>
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('record_exit', record_id=record.id) }}"
+                                    onsubmit="return confirm('Process vehicle exit?')">
+
+                                    <button
+                                        type="submit"
+                                        class="exit-button">
+
+                                        Process Exit
+
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="6"
+                                class="empty">
+
+                                No vehicles currently parked.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <section class="content-card rate-card">
+
+            <h2>Parking Rates</h2>
+
+            <div class="rates">
+
+                <div>
+                    <span>🏍️ Bike</span>
+                    <strong>₹10/hour</strong>
+                </div>
+
+                <div>
+                    <span>🚗 Car</span>
+                    <strong>₹20/hour</strong>
+                </div>
+
+                <div>
+                    <span>🚙 SUV</span>
+                    <strong>₹30/hour</strong>
+                </div>
+
+                <div>
+                    <span>🚚 Truck</span>
+                    <strong>₹40/hour</strong>
+                </div>
+
+                <div>
+                    <span>🚌 Bus</span>
+                    <strong>₹50/hour</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

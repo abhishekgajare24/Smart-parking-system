@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Revenue</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">🚗</div>
+
+            <div>
+
+                <h2>Smart Parking</h2>
+
+                <span>Management System</span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-item">
+
+                📊 Dashboard
+
+            </a>
+
+            <a href="{{ url_for('parking_slots') }}"
+               class="nav-item">
+
+                🅿️ Parking Slots
+
+            </a>
+
+            <a href="{{ url_for('vehicles') }}"
+               class="nav-item">
+
+                🚘 Vehicles
+
+            </a>
+
+            <a href="{{ url_for('vehicle_entry') }}"
+               class="nav-item">
+
+                ➕ Vehicle Entry
+
+            </a>
+
+            <a href="{{ url_for('vehicle_exit') }}"
+               class="nav-item">
+
+                🚪 Vehicle Exit
+
+            </a>
+
+            <a href="{{ url_for('parking_history') }}"
+               class="nav-item">
+
+                📋 Parking History
+
+            </a>
+
+            <a href="{{ url_for('revenue') }}"
+               class="nav-item active">
+
+                💰 Revenue
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+
+                🚪 Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Revenue</h1>
+
+                <p>Parking revenue overview</p>
+
+            </div>
+
+        </header>
+
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon money">
+                    ₹
+                </div>
+
+                <div>
+
+                    <p>Total Revenue</p>
+
+                    <h2>
+                        ₹{{ "%.2f"|format(total_revenue or 0) }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    ₹
+                </div>
+
+                <div>
+
+                    <p>Today's Revenue</p>
+
+                    <h2>
+                        ₹{{ "%.2f"|format(today_revenue or 0) }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    ✓
+                </div>
+
+                <div>
+
+                    <p>Paid Records</p>
+
+                    <h2>
+                        {{ total_paid }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <p>Pending Records</p>
+
+                    <h2>
+                        {{ total_pending }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    📋
+                </div>
+
+                <div>
+
+                    <p>Total Records</p>
+
+                    <h2>
+                        {{ total_records }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="content-card revenue-info">
+
+            <h2>Revenue Information</h2>
+
+            <p>
+                Revenue is automatically calculated when a parked
+                vehicle exits the parking area.
+            </p>
+
+            <p>
+                The fee is calculated according to the vehicle type
+                and number of billed parking hours.
+            </p>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

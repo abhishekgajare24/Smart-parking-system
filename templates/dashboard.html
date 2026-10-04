@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - Smart Parking</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                🚗
+            </div>
+
+            <div>
+                <h2>Smart Parking</h2>
+                <span>Management System</span>
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-item active">
+
+                <span>📊</span>
+                Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('parking_slots') }}"
+               class="nav-item">
+
+                <span>🅿️</span>
+                Parking Slots
+
+            </a>
+
+
+            <a href="{{ url_for('vehicles') }}"
+               class="nav-item">
+
+                <span>🚘</span>
+                Vehicles
+
+            </a>
+
+
+            <a href="{{ url_for('vehicle_entry') }}"
+               class="nav-item">
+
+                <span>➕</span>
+                Vehicle Entry
+
+            </a>
+
+
+            <a href="{{ url_for('vehicle_exit') }}"
+               class="nav-item">
+
+                <span>🚪</span>
+                Vehicle Exit
+
+            </a>
+
+
+            <a href="{{ url_for('parking_history') }}"
+               class="nav-item">
+
+                <span>📋</span>
+                Parking History
+
+            </a>
+
+
+            <a href="{{ url_for('revenue') }}"
+               class="nav-item">
+
+                <span>💰</span>
+                Revenue
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+
+                🚪 Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Dashboard</h1>
+
+                <p>
+                    Welcome to Smart Parking Management System
+                </p>
+
+            </div>
+
+
+            <div class="user-box">
+
+                <div class="user-avatar">
+                    👤
+                </div>
+
+                <div>
+
+                    <strong>
+                        {{ session.get('username') }}
+                    </strong>
+
+                    <small>
+                        Administrator
+                    </small>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- FLASH MESSAGE -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- STATISTICS -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon blue">
+                    🅿️
+                </div>
+
+                <div>
+
+                    <p>Total Slots</p>
+
+                    <h2>
+                        {{ total_slots }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon green">
+                    ✓
+                </div>
+
+                <div>
+
+                    <p>Available Slots</p>
+
+                    <h2>
+                        {{ available_slots }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon red">
+                    🚗
+                </div>
+
+                <div>
+
+                    <p>Occupied Slots</p>
+
+                    <h2>
+                        {{ occupied_slots }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon purple">
+                    🚘
+                </div>
+
+                <div>
+
+                    <p>Total Vehicles</p>
+
+                    <h2>
+                        {{ total_vehicles }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon orange">
+                    🅿️
+                </div>
+
+                <div>
+
+                    <p>Active Parking</p>
+
+                    <h2>
+                        {{ active_parking }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon money">
+                    ₹
+                </div>
+
+                <div>
+
+                    <p>Today's Revenue</p>
+
+                    <h2>
+                        ₹{{ "%.2f"|format(today_revenue or 0) }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Quick Actions</h2>
+
+                    <p>
+                        Common parking management operations
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+
+                <a href="{{ url_for('vehicle_entry') }}"
+                   class="quick-action">
+
+                    <span>➕</span>
+
+                    <div>
+
+                        <strong>Vehicle Entry</strong>
+
+                        <small>
+                            Record new vehicle entry
+                        </small>
+
+                    </div>
+
+                </a>
+
+
+                <a href="{{ url_for('vehicle_exit') }}"
+                   class="quick-action">
+
+                    <span>🚪</span>
+
+                    <div>
+
+                        <strong>Vehicle Exit</strong>
+
+                        <small>
+                            Process vehicle exit
+                        </small>
+
+                    </div>
+
+                </a>
+
+
+                <a href="{{ url_for('vehicles') }}"
+                   class="quick-action">
+
+                    <span>🚘</span>
+
+                    <div>
+
+                        <strong>Vehicles</strong>
+
+                        <small>
+                            Manage registered vehicles
+                        </small>
+
+                    </div>
+
+                </a>
+
+
+                <a href="{{ url_for('parking_slots') }}"
+                   class="quick-action">
+
+                    <span>🅿️</span>
+
+                    <div>
+
+                        <strong>Parking Slots</strong>
+
+                        <small>
+                            Manage parking spaces
+                        </small>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- RECENT PARKING -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Recent Parking Records</h2>
+
+                    <p>
+                        Latest parking activity
+                    </p>
+
+                </div>
+
+
+                <a href="{{ url_for('parking_history') }}"
+                   class="view-all">
+
+                    View All
+
+                </a>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Vehicle</th>
+                            <th>Type</th>
+                            <th>Slot</th>
+                            <th>Entry Time</th>
+                            <th>Exit Time</th>
+                            <th>Fee</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for record in recent_records %}
+
+                        <tr>
+
+                            <td>
+                                {{ record.vehicle_number }}
+                            </td>
+
+                            <td>
+                                {{ record.vehicle_type }}
+                            </td>
+
+                            <td>
+                                {{ record.slot_number }}
+                            </td>
+
+                            <td>
+                                {{ record.entry_time }}
+                            </td>
+
+                            <td>
+
+                                {% if record.exit_time %}
+                                    {{ record.exit_time }}
+                                {% else %}
+                                    -
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                ₹{{ record.parking_fee or 0 }}
+                            </td>
+
+                            <td>
+
+                                {% if record.payment_status == 'Paid' %}
+
+                                    <span class="badge success">
+                                        Paid
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge pending">
+                                        Pending
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="7"
+                                class="empty">
+
+                                No parking records found.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Parking History</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">🚗</div>
+
+            <div>
+
+                <h2>Smart Parking</h2>
+
+                <span>Management System</span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-item">
+
+                📊 Dashboard
+
+            </a>
+
+            <a href="{{ url_for('parking_slots') }}"
+               class="nav-item">
+
+                🅿️ Parking Slots
+
+            </a>
+
+            <a href="{{ url_for('vehicles') }}"
+               class="nav-item">
+
+                🚘 Vehicles
+
+            </a>
+
+            <a href="{{ url_for('vehicle_entry') }}"
+               class="nav-item">
+
+                ➕ Vehicle Entry
+
+            </a>
+
+            <a href="{{ url_for('vehicle_exit') }}"
+               class="nav-item">
+
+                🚪 Vehicle Exit
+
+            </a>
+
+            <a href="{{ url_for('parking_history') }}"
+               class="nav-item active">
+
+                📋 Parking History
+
+            </a>
+
+            <a href="{{ url_for('revenue') }}"
+               class="nav-item">
+
+                💰 Revenue
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+
+                🚪 Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Parking History</h1>
+
+                <p>View all parking transactions</p>
+
+            </div>
+
+        </header>
+
+
+        <section class="content-card">
+
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Parking Records</h2>
+
+                    <p>
+                        Complete parking transaction history
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Vehicle</th>
+                            <th>Type</th>
+                            <th>Owner</th>
+                            <th>Slot</th>
+                            <th>Entry</th>
+                            <th>Exit</th>
+                            <th>Duration</th>
+                            <th>Fee</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for record in records %}
+
+                        <tr>
+
+                            <td>
+                                {{ record.vehicle_number }}
+                            </td>
+
+                            <td>
+                                {{ record.vehicle_type }}
+                            </td>
+
+                            <td>
+                                {{ record.owner_name }}
+                            </td>
+
+                            <td>
+                                {{ record.slot_number }}
+                            </td>
+
+                            <td>
+                                {{ record.entry_time }}
+                            </td>
+
+                            <td>
+
+                                {% if record.exit_time %}
+
+                                    {{ record.exit_time }}
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ record.duration or '-' }}
+                            </td>
+
+                            <td>
+
+                                ₹{{ record.parking_fee or 0 }}
+
+                            </td>
+
+                            <td>
+
+                                {% if record.payment_status == 'Paid' %}
+
+                                    <span class="badge success">
+                                        Paid
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge pending">
+                                        Pending
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="9"
+                                class="empty">
+
+                                No parking history found.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

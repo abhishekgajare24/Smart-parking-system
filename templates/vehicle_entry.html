@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Vehicle Entry</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">🚗</div>
+
+            <div>
+
+                <h2>Smart Parking</h2>
+
+                <span>Management System</span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-item">
+
+                📊 Dashboard
+
+            </a>
+
+            <a href="{{ url_for('parking_slots') }}"
+               class="nav-item">
+
+                🅿️ Parking Slots
+
+            </a>
+
+            <a href="{{ url_for('vehicles') }}"
+               class="nav-item">
+
+                🚘 Vehicles
+
+            </a>
+
+            <a href="{{ url_for('vehicle_entry') }}"
+               class="nav-item active">
+
+                ➕ Vehicle Entry
+
+            </a>
+
+            <a href="{{ url_for('vehicle_exit') }}"
+               class="nav-item">
+
+                🚪 Vehicle Exit
+
+            </a>
+
+            <a href="{{ url_for('parking_history') }}"
+               class="nav-item">
+
+                📋 Parking History
+
+            </a>
+
+            <a href="{{ url_for('revenue') }}"
+               class="nav-item">
+
+                💰 Revenue
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+
+                🚪 Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Vehicle Entry</h1>
+
+                <p>Record vehicle entry into parking</p>
+
+            </div>
+
+        </header>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- ENTRY FORM -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Record Entry</h2>
+
+                    <p>
+                        Select vehicle and available parking slot
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="{{ url_for('record_entry') }}"
+                class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>Select Vehicle</label>
+
+                    <select
+                        name="vehicle_id"
+                        required>
+
+                        <option value="">
+                            Select Vehicle
+                        </option>
+
+                        {% for vehicle in vehicles %}
+
+                            <option value="{{ vehicle.id }}">
+
+                                {{ vehicle.vehicle_number }}
+                                -
+                                {{ vehicle.vehicle_type }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Select Parking Slot</label>
+
+                    <select
+                        name="slot_id"
+                        required>
+
+                        <option value="">
+                            Select Available Slot
+                        </option>
+
+                        {% for slot in slots %}
+
+                            <option value="{{ slot.id }}">
+
+                                {{ slot.slot_number }}
+                                -
+                                {{ slot.vehicle_type }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group form-button">
+
+                    <button
+                        type="submit"
+                        class="primary-button">
+
+                        🚗 Record Entry
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- ACTIVE VEHICLES -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Currently Parked Vehicles</h2>
+
+                    <p>
+                        Vehicles currently inside parking
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Vehicle</th>
+                            <th>Type</th>
+                            <th>Slot</th>
+                            <th>Entry Time</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for record in active_records %}
+
+                        <tr>
+
+                            <td>
+                                {{ record.vehicle_number }}
+                            </td>
+
+                            <td>
+                                {{ record.vehicle_type }}
+                            </td>
+
+                            <td>
+                                {{ record.slot_number }}
+                            </td>
+
+                            <td>
+                                {{ record.entry_time }}
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="4"
+                                class="empty">
+
+                                No vehicles currently parked.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

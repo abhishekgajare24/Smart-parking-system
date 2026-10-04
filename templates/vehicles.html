@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Vehicles</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">🚗</div>
+
+            <div>
+
+                <h2>Smart Parking</h2>
+
+                <span>Management System</span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-item">
+
+                📊 Dashboard
+
+            </a>
+
+            <a href="{{ url_for('parking_slots') }}"
+               class="nav-item">
+
+                🅿️ Parking Slots
+
+            </a>
+
+            <a href="{{ url_for('vehicles') }}"
+               class="nav-item active">
+
+                🚘 Vehicles
+
+            </a>
+
+            <a href="{{ url_for('vehicle_entry') }}"
+               class="nav-item">
+
+                ➕ Vehicle Entry
+
+            </a>
+
+            <a href="{{ url_for('vehicle_exit') }}"
+               class="nav-item">
+
+                🚪 Vehicle Exit
+
+            </a>
+
+            <a href="{{ url_for('parking_history') }}"
+               class="nav-item">
+
+                📋 Parking History
+
+            </a>
+
+            <a href="{{ url_for('revenue') }}"
+               class="nav-item">
+
+                💰 Revenue
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+
+                🚪 Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Vehicles</h1>
+
+                <p>Manage registered vehicles</p>
+
+            </div>
+
+        </header>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- ADD VEHICLE -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Register Vehicle</h2>
+
+                    <p>
+                        Add a new vehicle
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="{{ url_for('add_vehicle') }}"
+                class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>Vehicle Number</label>
+
+                    <input
+                        type="text"
+                        name="vehicle_number"
+                        placeholder="MH12AB1234"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Vehicle Type</label>
+
+                    <select
+                        name="vehicle_type"
+                        required>
+
+                        <option value="">
+                            Select Type
+                        </option>
+
+                        <option value="Bike">
+                            Bike
+                        </option>
+
+                        <option value="Car">
+                            Car
+                        </option>
+
+                        <option value="SUV">
+                            SUV
+                        </option>
+
+                        <option value="Truck">
+                            Truck
+                        </option>
+
+                        <option value="Bus">
+                            Bus
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Owner Name</label>
+
+                    <input
+                        type="text"
+                        name="owner_name"
+                        placeholder="Owner name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Phone Number</label>
+
+                    <input
+                        type="text"
+                        name="owner_phone"
+                        placeholder="Phone number"
+                    >
+
+                </div>
+
+
+                <div class="form-group form-button">
+
+                    <button
+                        type="submit"
+                        class="primary-button">
+
+                        + Register Vehicle
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- VEHICLES TABLE -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Registered Vehicles</h2>
+
+                    <p>
+                        All registered vehicles
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Vehicle Number</th>
+                            <th>Type</th>
+                            <th>Owner</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for vehicle in vehicles %}
+
+                        <tr>
+
+                            <td>
+                                {{ vehicle.id }}
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    {{ vehicle.vehicle_number }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+                                {{ vehicle.vehicle_type }}
+                            </td>
+
+                            <td>
+                                {{ vehicle.owner_name }}
+                            </td>
+
+                            <td>
+                                {{ vehicle.owner_phone or '-' }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{{ url_for('delete_vehicle', vehicle_id=vehicle.id) }}"
+                                    class="delete-button"
+                                    onclick="return confirm('Delete this vehicle?')">
+
+                                    Delete
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="6"
+                                class="empty">
+
+                                No vehicles registered.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

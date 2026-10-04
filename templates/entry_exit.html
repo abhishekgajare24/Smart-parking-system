@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Vehicle Entry & Exit - Smart Parking
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="top-header">
+
+    <div class="brand-area">
+
+        <div class="brand-icon">
+            🅿️
+        </div>
+
+        <div>
+
+            <h1>
+                Smart Parking
+            </h1>
+
+            <span>
+                Management System
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="user-area">
+
+        <div class="user-info">
+
+            <div class="user-avatar">
+                A
+            </div>
+
+            <div>
+
+                <strong>
+                    Admin
+                </strong>
+
+                <small>
+                    Administrator
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <a href="{{ url_for('logout') }}"
+           class="logout-button">
+
+            Logout
+
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="page-container">
+
+
+    <!-- PAGE HEADING -->
+
+    <section class="page-heading">
+
+        <div>
+
+            <span class="page-label">
+                PARKING OPERATIONS
+            </span>
+
+            <h2>
+                Vehicle Entry & Exit
+            </h2>
+
+            <p>
+                Record vehicle entry, exit, parking duration
+                and automatic parking fees.
+            </p>
+
+        </div>
+
+
+        <a href="{{ url_for('dashboard') }}"
+           class="back-button">
+
+            ← Dashboard
+
+        </a>
+
+    </section>
+
+
+
+    <!-- =================================================
+         ENTRY FORM
+    ================================================== -->
+
+    <section class="content-card">
+
+        <div class="card-heading">
+
+            <div>
+
+                <div class="card-icon orange">
+                    ↔
+                </div>
+
+                <div>
+
+                    <h3>
+                        Vehicle Entry
+                    </h3>
+
+                    <p>
+                        Select a registered vehicle and
+                        an available parking slot.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% if vehicles and available_slots %}
+
+        <form
+            method="POST"
+            action="{{ url_for('vehicle_entry') }}"
+            class="entry-form"
+            id="entryForm"
+        >
+
+
+            <!-- VEHICLE -->
+
+            <div class="form-group">
+
+                <label for="vehicle_id">
+                    Select Vehicle
+                </label>
+
+                <select
+                    name="vehicle_id"
+                    id="vehicle_id"
+                    required
+                >
+
+                    <option value="">
+                        Select Vehicle
+                    </option>
+
+                    {% for vehicle in vehicles %}
+
+                    <option
+                        value="{{ vehicle.id }}"
+                        data-type="{{ vehicle.vehicle_type }}"
+                    >
+
+                        {{ vehicle.vehicle_number }}
+                        -
+                        {{ vehicle.vehicle_type }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <!-- SLOT -->
+
+            <div class="form-group">
+
+                <label for="slot_id">
+                    Select Parking Slot
+                </label>
+
+                <select
+                    name="slot_id"
+                    id="slot_id"
+                    required
+                >
+
+                    <option value="">
+                        Select Slot
+                    </option>
+
+                    {% for slot in available_slots %}
+
+                    <option
+                        value="{{ slot.id }}"
+                        data-type="{{ slot.vehicle_type }}"
+                    >
+
+                        {{ slot.slot_number }}
+                        -
+                        {{ slot.vehicle_type }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <!-- BUTTON -->
+
+            <div class="form-group">
+
+                <label>
+                    &nbsp;
+                </label>
+
+                <button
+                    type="submit"
+                    class="primary-button entry-button"
+                >
+
+                    🚗 Vehicle Entry
+
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <div class="fee-info-box">
+
+            <strong>
+                Parking Fee Rates
+            </strong>
+
+            <span>
+                Car: ₹50 first hour + ₹30/hour
+                after that
+            </span>
+
+            <span>
+                Bike: ₹20 first hour + ₹10/hour
+                after that
+            </span>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            {% if not vehicles %}
+
+                <div class="empty-icon">
+                    🚗
+                </div>
+
+                <h3>
+                    No Registered Vehicles
+                </h3>
+
+                <p>
+                    Add a vehicle before recording
+                    vehicle entry.
+                </p>
+
+                <br>
+
+                <a
+                    href="{{ url_for('vehicles') }}"
+                    class="primary-button"
+                >
+                    Add Vehicle
+                </a>
+
+            {% elif not available_slots %}
+
+                <div class="empty-icon">
+                    🅿️
+                </div>
+
+                <h3>
+                    No Available Parking Slots
+                </h3>
+
+                <p>
+                    All parking slots are currently occupied.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+
+    <!-- =================================================
+         CURRENTLY PARKED VEHICLES
+    ================================================== -->
+
+    <section class="content-card">
+
+        <div class="card-heading">
+
+            <div>
+
+                <div class="card-icon green">
+                    🚗
+                </div>
+
+                <div>
+
+                    <h3>
+                        Currently Parked Vehicles
+                    </h3>
+
+                    <p>
+                        Vehicles currently inside the parking area.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% if active_records %}
+
+        <div class="table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Vehicle</th>
+
+                        <th>Type</th>
+
+                        <th>Slot</th>
+
+                        <th>Entry Time</th>
+
+                        <th>Duration</th>
+
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for record in active_records %}
+
+                    <tr>
+
+                        <td>
+                            {{ loop.index }}
+                        </td>
+
+
+                        <td>
+
+                            <strong class="vehicle-number">
+                                {{ record.vehicle_number }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if record.vehicle_type == "Car" %}
+
+                                <span class="type-badge car">
+                                    🚗 Car
+                                </span>
+
+                            {% else %}
+
+                                <span class="type-badge bike">
+                                    🏍️ Bike
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="slot-badge">
+                                {{ record.slot_number }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+                            {{ record.entry_time }}
+                        </td>
+
+
+                        <td>
+
+                            <span class="status-badge occupied">
+                                Active
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'vehicle_exit',
+                                    record_id=record.id
+                                ) }}"
+                                onsubmit="return confirmExit(
+                                    '{{ record.vehicle_number }}'
+                                );"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="exit-button"
+                                >
+
+                                    🚪 Vehicle Exit
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                🅿️
+            </div>
+
+            <h3>
+                No Vehicles Currently Parked
+            </h3>
+
+            <p>
+                Active parking vehicles will appear here.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+
+    <!-- =================================================
+         FEE INFORMATION
+    ================================================== -->
+
+    <section class="info-panel">
+
+        <div class="info-icon">
+            💰
+        </div>
+
+        <div>
+
+            <h3>
+                Automatic Parking Fee
+            </h3>
+
+            <p>
+                When a vehicle exits, the system automatically
+                calculates the parking duration and fee.
+                The minimum charge is one hour and partial hours
+                are rounded up.
+            </p>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <p>
+
+        © 2026 Smart Parking System
+
+        <span>•</span>
+
+        Vehicle Entry & Exit
+
+    </p>
+
+</footer>
+
+
+
+<script>
+
+function confirmExit(vehicleNumber) {
+
+    return confirm(
+        "Record vehicle exit for " +
+        vehicleNumber +
+        "?\n\n" +
+        "The parking fee will be calculated automatically."
+    );
+
+}
+
+
+/* =====================================================
+   FILTER COMPATIBLE SLOTS
+===================================================== */
+
+const vehicleSelect =
+    document.getElementById("vehicle_id");
+
+const slotSelect =
+    document.getElementById("slot_id");
+
+
+if (vehicleSelect && slotSelect) {
+
+    const originalSlots =
+        Array.from(slotSelect.options);
+
+
+    vehicleSelect.addEventListener(
+        "change",
+        function () {
+
+            const selectedOption =
+                vehicleSelect.options[
+                    vehicleSelect.selectedIndex
+                ];
+
+
+            const vehicleType =
+                selectedOption.dataset.type;
+
+
+            slotSelect.innerHTML = "";
+
+
+            const defaultOption =
+                document.createElement("option");
+
+            defaultOption.value = "";
+
+            defaultOption.textContent =
+                "Select Slot";
+
+            slotSelect.appendChild(
+                defaultOption
+            );
+
+
+            originalSlots.forEach(
+                function (option) {
+
+                    if (!option.value) {
+                        return;
+                    }
+
+
+                    const slotType =
+                        option.dataset.type;
+
+
+                    if (
+                        slotType === "Any" ||
+                        slotType.toLowerCase()
+                            === vehicleType.toLowerCase()
+                    ) {
+
+                        slotSelect.appendChild(
+                            option.cloneNode(true)
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+</script>
+
+
+</body>
+
+</html>

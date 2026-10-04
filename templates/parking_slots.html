@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Parking Slots</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">🚗</div>
+
+            <div>
+
+                <h2>Smart Parking</h2>
+
+                <span>Management System</span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="nav-item">
+
+                📊 Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('parking_slots') }}"
+               class="nav-item active">
+
+                🅿️ Parking Slots
+
+            </a>
+
+
+            <a href="{{ url_for('vehicles') }}"
+               class="nav-item">
+
+                🚘 Vehicles
+
+            </a>
+
+
+            <a href="{{ url_for('vehicle_entry') }}"
+               class="nav-item">
+
+                ➕ Vehicle Entry
+
+            </a>
+
+
+            <a href="{{ url_for('vehicle_exit') }}"
+               class="nav-item">
+
+                🚪 Vehicle Exit
+
+            </a>
+
+
+            <a href="{{ url_for('parking_history') }}"
+               class="nav-item">
+
+                📋 Parking History
+
+            </a>
+
+
+            <a href="{{ url_for('revenue') }}"
+               class="nav-item">
+
+                💰 Revenue
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('logout') }}"
+               class="logout-link">
+
+                🚪 Logout
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <main class="main-content">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>Parking Slots</h1>
+
+                <p>Manage parking spaces</p>
+
+            </div>
+
+        </header>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- ADD SLOT -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>Add Parking Slot</h2>
+
+                    <p>
+                        Create a new parking space
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form method="POST"
+                  action="{{ url_for('add_slot') }}"
+                  class="form-grid">
+
+
+                <div class="form-group">
+
+                    <label>Slot Number</label>
+
+                    <input
+                        type="text"
+                        name="slot_number"
+                        placeholder="Example: A01"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Vehicle Type</label>
+
+                    <select name="vehicle_type"
+                            required>
+
+                        <option value="Any">
+                            Any
+                        </option>
+
+                        <option value="Bike">
+                            Bike
+                        </option>
+
+                        <option value="Car">
+                            Car
+                        </option>
+
+                        <option value="SUV">
+                            SUV
+                        </option>
+
+                        <option value="Truck">
+                            Truck
+                        </option>
+
+                        <option value="Bus">
+                            Bus
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group form-button">
+
+                    <button type="submit"
+                            class="primary-button">
+
+                        + Add Slot
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- SLOT TABLE -->
+
+        <section class="content-card">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>All Parking Slots</h2>
+
+                    <p>
+                        Current parking space status
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Slot Number</th>
+                            <th>Vehicle Type</th>
+                            <th>Status</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for slot in slots %}
+
+                        <tr>
+
+                            <td>
+                                {{ slot.id }}
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    {{ slot.slot_number }}
+                                </strong>
+
+                            </td>
+
+                            <td>
+                                {{ slot.vehicle_type }}
+                            </td>
+
+                            <td>
+
+                                {% if slot.status == 'Available' %}
+
+                                    <span class="badge success">
+                                        Available
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge danger">
+                                        Occupied
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if slot.status == 'Available' %}
+
+                                    <a
+                                        href="{{ url_for('delete_slot', slot_id=slot.id) }}"
+                                        class="delete-button"
+                                        onclick="return confirm('Delete this slot?')">
+
+                                        Delete
+
+                                    </a>
+
+                                {% else %}
+
+                                    <span class="disabled-text">
+                                        Occupied
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="empty">
+
+                                No parking slots available.
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+
+</html>
